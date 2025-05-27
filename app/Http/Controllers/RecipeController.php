@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\RecipeService;
 use App\Models\Recipe;
 use App\Helpers\RecipeHelper;
+use Illuminate\Support\Facades\Log;
 
 
 class RecipeController extends Controller
@@ -19,9 +20,32 @@ class RecipeController extends Controller
 
     public function store(Request $request)
     {
-        $result = $this->recipeService->saveFromSession($request->user());
-        return response()->json($result, 201);
+        if(!session()->has('prompt')) {
+            return response()->json([
+                'message' => 'Os dados da receita não foram encontrados'
+            ], 400);
+        }
+
+        try {
+            $recipe = $this->recipeService->saveFromSession($request->user());
+
+            return response()->json([
+                'data' => $recipe,
+                'message' => 'Receita salva com sucesso!'
+            ], 201);
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error("Database error saving recipe: " . $e->getMessage());
+            return response()->json([
+                'message' => 'Erro ao persistir receita no banco de dados'
+            ], 500);
+        } catch (\Exception $e) {
+        Log::error("Error saving recipe: " . $e->getMessage());
+        return response()->json([
+            'message' => 'Erro inesperado ao salvar receita'
+        ], 500);
+        }
     }
+
 
     public function update(Request $request, Recipe $recipe)
     {
@@ -37,9 +61,9 @@ class RecipeController extends Controller
     }
 
     public function share(Recipe $recipe)
-{
+    {
     $message = RecipeHelper::generateShareMessage($recipe);
     return response()->json(['message' => $message]);
-}
+    }   
     
 }

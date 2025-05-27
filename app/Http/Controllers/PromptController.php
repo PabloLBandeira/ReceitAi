@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PromptService;
 use App\Helpers\PromptHelper;
+use App\Helpers\RecipeHelper;
 
 class PromptController extends Controller
 {
@@ -18,7 +19,7 @@ class PromptController extends Controller
    public function index() 
    {
     $data = $this->promptService->getSessionData();
-    return view('prompts.index', $data);
+    return view('cozinhar', $data);
    }
 
     public function generate(Request $request) 
@@ -29,7 +30,7 @@ class PromptController extends Controller
 
         $data = $this->promptService->processPrompt($request);
 
-        return view('prompts.index', $data);
+        return view('prompts', $data);
     }
 
     
@@ -37,6 +38,24 @@ class PromptController extends Controller
     {
         $this->promptService->clearSessionData();
         return redirect()->route('prompts.index');
+    }
+
+    public function share() 
+    {
+       $promptData = session('prompt', []);
+
+       $temporaryRecipe = new \App\Models\Recipe([
+        'title' => 'Receita gerada',
+        'occasion' => $promptData['occasion'],
+        'skill' => $promptData['skill'] ?? '',
+        'people' => $promptData['people'] ?? 1,
+        'ingredients' => $promptData['ingredients'] ?? '',
+        'content' => $promptData['recipe'] ?? ''
+       ]);
+
+       return response()->json([
+        'message' => RecipeHelper::generateShareMessage($temporaryRecipe)
+        ]);
     }
 
 }
