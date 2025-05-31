@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Services\PromptService;
 use App\Helpers\PromptHelper;
 use App\Helpers\RecipeHelper;
+use App\Models\Skill;
+use App\Models\Type;
+use App\Models\Occasion;
 
 class PromptController extends Controller
 {
@@ -17,10 +20,14 @@ class PromptController extends Controller
    }
 
    public function index() 
-   {
-    $data = $this->promptService->getSessionData();
-    return view('cozinhar', $data);
-   }
+    {
+    return view('cozinhar', [
+        'sessionData' => $this->promptService->getSessionData(),
+        'skills' => Skill::all(), 
+        'occasions' => Occasion::all(), 
+        'types' => Type::all() 
+    ]);
+    }
 
     public function generate(Request $request) 
     {

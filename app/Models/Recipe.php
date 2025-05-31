@@ -20,9 +20,7 @@ class Recipe extends Model
         'content',
     ];
 
-    /**
-     * Relacionamento com o usuário que criou a receita.
-     */
+    
     public function user()
     {
         return $this->belongsTo(User::class);

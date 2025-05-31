@@ -18,4 +18,10 @@ export default {
     },
 
     plugins: [forms],
+
+    safelist: [
+        {
+            pattern: /bg-\[#.*\]/, // Permite cores HEX como bg-[#D94F30]
+        },
+    ],
 };

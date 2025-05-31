@@ -18,6 +18,11 @@ class RecipeController extends Controller
         $this->recipeService = $recipeService;
     }
 
+    public function index()
+    {
+        return view('perfil');
+    }
+
     public function store(Request $request)
     {
         if(!session()->has('prompt')) {

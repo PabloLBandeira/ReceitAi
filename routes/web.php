@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptController;
 use App\Http\Controllers\RecipeController;
-use App\Models\Recipe;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,7 +10,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [RecipeController::class, 'index'])->name('dashboard');
+    Route::get('/perfil', [RecipeController::class, 'index'])->name('perfil');
     
     Route::prefix('cozinhar')->group(function() {
         Route::get('/', [PromptController::class, 'index'])->name('cozinhar.index');
